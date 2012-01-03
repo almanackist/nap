@@ -3,6 +3,7 @@ import urllib
 
 import httplib2
 
+from slumber import exceptions
 from slumber.serialize import JsonSerializer
 
 __all__ = ["Resource", "Api"]
@@ -131,21 +132,51 @@ class Resource(object):
         body = None
         if "body" in kwargs:
             headers['Content-Type'] = s.get_content_type()
-            body = s.dumps(kwargs.pop("body"))
+            try:
+                body = s.dumps(kwargs.pop("body"))
+            except Exception, err:
+                # This isn't pretty but we need to be able to
+                # handle arbitrary exceptions from arbitrary
+                # serializer classes.
+                #
+                # Mostly this is to maintain consistent behavior
+                # with how this module handles errors when deserializing.
+                # We don't really need a custom exception class because 
+                # we don't need to pass anything through to the calling
+                # code like we have to when deserializing.
+                raise exceptions.SerializerEncoderError(err)
 
         if kwargs:
             url = "?".join([url, urllib.urlencode(kwargs)])
 
-        # TODO: Throw an exception like the old slumber, but make
-        # the exception class act likle urlib2.HTTPErrror
-        # See http://docs.python.org/library/urllib2.html#urllib2.HTTPError
-        # and also read the source.
         resp, raw_content = client.request(url, method, body=body, headers=headers)
+
+        # If the HTTP response code indicates an error, raise an exception
+        # preserving the response and content
+        if 400 <= resp.status <= 499:
+            raise exceptions.HttpClientError(
+                "Client Error %s: %s" % (resp.status, url),
+                response=resp, content=raw_content)
+        elif 500 <= resp.status <= 599:
+            raise exceptions.HttpServerError(
+                "Server Error %s: %s" % (resp.status, url),
+                response=resp, content=raw_content)
+
         if raw:
             content = raw_content
         else:
             if raw_content:
-                content = s.loads(raw_content)
+                try:
+                    content = s.loads(raw_content)
+                except Exception, err:
+                    # Raise an exception, preserving the content from
+                    # the HTTP response.
+                    #
+                    # This isn't pretty but we need to be able to
+                    # handle arbitrary exceptions from arbitrary
+                    # serializer classes.
+                    raise exceptions.SerializerDecodeError(str(err),
+                        content=raw_content)
             else:
                 content = None
 
