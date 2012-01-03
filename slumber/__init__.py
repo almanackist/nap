@@ -116,7 +116,7 @@ class Resource(object):
     def _get_serializer(self):
         return self._meta.serializer()
 
-    def request(self, method, **kwargs):
+    def request(self, method, raw=False, **kwargs):
         url = self.build_url()
         client = self._get_client()
         s = self._get_serializer()
@@ -136,7 +136,19 @@ class Resource(object):
         if kwargs:
             url = "?".join([url, urllib.urlencode(kwargs)])
 
-        resp, content = client.request(url, method, body=body, headers=headers)
+        # TODO: Throw an exception like the old slumber, but make
+        # the exception class act likle urlib2.HTTPErrror
+        # See http://docs.python.org/library/urllib2.html#urllib2.HTTPError
+        # and also read the source.
+        resp, raw_content = client.request(url, method, body=body, headers=headers)
+        if raw:
+            content = raw_content
+        else:
+            if raw_content:
+                content = s.loads(raw_content)
+            else:
+                content = None
+
         return resp, content
 
     def get(self, **kwargs):
