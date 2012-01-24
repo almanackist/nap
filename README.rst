@@ -1,7 +1,7 @@
 Nap
 =======
 
-Nap is fork of Slumber_. It provides a simple and flexible way to interact with
+Nap is a fork of Slumber_. It provides a simple and flexible way to interact with
 RESTful apis.
 
 .. _Slumber: http://slumber.in/
