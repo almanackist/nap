@@ -1,12 +1,12 @@
-class SlumberBaseException(Exception):
+class NapBaseException(Exception):
     """
-    All Slumber exceptions inherit from this exception.
+    All Nap exceptions inherit from this exception.
     """
 
 
-class SlumberHttpBaseException(SlumberBaseException):
+class NapHttpBaseException(NapBaseException):
     """
-    All Slumber HTTP Exceptions inherit from this exception.
+    All Nap HTTP Exceptions inherit from this exception.
 
     Instances of this class have these attributes to expose information
     about the HTTP request that raised this exception to the calling code:
@@ -33,33 +33,33 @@ class SlumberHttpBaseException(SlumberBaseException):
         # does things.
         self.response = response
         self.content = content
-        super(SlumberHttpBaseException, self).__init__(desc)
+        super(NapHttpBaseException, self).__init__(desc)
 
 
-class HttpClientError(SlumberHttpBaseException):
+class HttpClientError(NapHttpBaseException):
     """
     Called when the server tells us there was a client error (4xx).
     """
 
 
-class HttpServerError(SlumberHttpBaseException):
+class HttpServerError(NapHttpBaseException):
     """
     Called when the server tells us there was a server error (5xx).
     """
 
 
-class SerializerNoAvailable(SlumberBaseException):
+class SerializerNoAvailable(NapBaseException):
     """
     There are no available Serializers.
     """
 
 
-class SerializerNotAvailable(SlumberBaseException):
+class SerializerNotAvailable(NapBaseException):
     """
     The chosen Serializer is not available.
     """
 
-class SerializerError(SlumberBaseException):
+class SerializerError(NapBaseException):
     """
     All serialization/deserializations inherit from this class. 
     """
@@ -85,7 +85,7 @@ class SerializerDecodeError(SerializerError):
     """
     pass
 
-class ImproperlyConfigured(SlumberBaseException):
+class ImproperlyConfigured(NapBaseException):
     """
-    Slumber is somehow improperly configured.
+    Nap is somehow improperly configured.
     """

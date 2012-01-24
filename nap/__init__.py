@@ -3,8 +3,8 @@ import urllib
 
 import httplib2
 
-from slumber import exceptions
-from slumber.serialize import JsonSerializer
+from nap import exceptions
+from nap.serialize import JsonSerializer
 
 __all__ = ["Resource", "Api"]
 
@@ -66,7 +66,7 @@ class ResourceBase(type):
 
 class Resource(object):
     """
-    Resource provides the main functionality behind slumber. It handles the
+    Resource provides the main functionality behind nap. It handles the
     attribute -> url, kwarg -> query param, and other related behind the scenes
     python to HTTP transformations. It's goal is to represent a single resource
     which may or may not have children.

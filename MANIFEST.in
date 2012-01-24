@@ -1,4 +1,2 @@
-recursive-include docs *.rst
 include README.rst
 include LICENSE.txt
-include CHANGELOG.rst

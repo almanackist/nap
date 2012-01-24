@@ -1,4 +1,4 @@
-from slumber import exceptions
+from nap import exceptions
 
 SERIALIZERS = {
     "json": True,
