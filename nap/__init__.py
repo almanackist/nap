@@ -131,7 +131,7 @@ class Resource(object):
 
         body = None
         if "body" in kwargs:
-            headers['Content-Type'] = s.get_content_type()
+            headers.setdefault('Content-Type', s.get_content_type())
             try:
                 body = s.dumps(kwargs.pop("body"))
             except Exception, err:
@@ -195,11 +195,16 @@ class Resource(object):
         return self.request("DELETE", **kwargs)
 
 def Api(domain, resource_class=Resource, **kwargs):
-    # Let's build a ResourceOptions
-    meta_attrs =  {'domain': domain}
-    meta_attrs.update(kwargs)
-    meta = type('ResourceOptions', (ResourceOptions,), meta_attrs)
+    try:
+        meta_ins = getattr(resource_class, "_meta")
+        meta_attrs = dict(meta_ins.__class__.__dict__)
+    except AttributeError:
+        meta_attrs = {}
 
-    cls = type('Resource', (resource_class,), {'Meta': meta})
+    kwargs['domain'] = domain
+    meta_attrs.update(kwargs)
+    meta = type('%sOptions' % resource_class.__name__, (ResourceOptions,), meta_attrs)
+
+    cls = type(resource_class.__name__, (resource_class,), {'Meta': meta})
 
     return cls()
