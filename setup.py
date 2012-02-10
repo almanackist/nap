@@ -11,7 +11,7 @@ base_dir = os.path.dirname(os.path.abspath(__file__))
 
 setup(
     name = "nap",
-    version = "0.4.0",
+    version = "0.4.5",
     description = "A fork of slumber, a library that makes consuming a REST API easier and more convenient",
     long_description="\n\n".join([
         open(os.path.join(base_dir, "README.rst"), "r").read(),
